@@ -16,6 +16,7 @@ test('health endpoint responds', async ({ request }) => {
 
 test('create public session flow', async ({ page }) => {
   await page.goto('/start');
+  await page.getByPlaceholder('How others will see you').fill('Test User');
   await page.getByRole('button', { name: 'Start Session →' }).click();
   await page.waitForURL(/\/r\/.+/);
   await expect(page.getByText('Ready to talk?')).toBeVisible();

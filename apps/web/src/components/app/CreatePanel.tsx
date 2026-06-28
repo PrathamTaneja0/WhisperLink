@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { PasswordInput } from '@/components/ui/password-input';
 import { DurationPicker } from './DurationPicker';
 import { AccessToggle } from './AccessToggle';
+import { NameInput } from './NameInput';
 import { FormError } from './FormError';
 import { createSession, storeJoinToken } from '@/lib/api';
 
@@ -12,6 +13,7 @@ export function CreatePanel() {
   const navigate = useNavigate();
   const [duration, setDuration] = useState(DEFAULT_DURATION_MINUTES);
   const [isProtected, setIsProtected] = useState(false);
+  const [displayName, setDisplayName] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string>();
   const [loading, setLoading] = useState(false);
@@ -27,9 +29,15 @@ export function CreatePanel() {
       }
     }
 
+    if (!displayName.trim()) {
+      setError('Enter your name');
+      return;
+    }
+
     setLoading(true);
     try {
       const result = await createSession({
+        displayName: displayName.trim(),
         durationMinutes: duration,
         access: isProtected ? 'protected' : 'public',
         password: isProtected ? password : undefined,
@@ -52,6 +60,7 @@ export function CreatePanel() {
 
   return (
     <form onSubmit={handleSubmit} className="card-privacy mx-auto space-y-6 p-6 text-center sm:p-8">
+      <NameInput value={displayName} onChange={setDisplayName} centered />
       <DurationPicker value={duration} onChange={setDuration} />
       <AccessToggle isProtected={isProtected} onChange={setIsProtected} />
       {isProtected && (

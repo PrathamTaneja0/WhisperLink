@@ -26,6 +26,7 @@ async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
 }
 
 export async function createSession(body: {
+  displayName: string;
   durationMinutes: number;
   access: 'public' | 'protected';
   password?: string;
@@ -42,11 +43,12 @@ export async function getSessionInfo(roomId: string): Promise<SessionInfoRespons
 
 export async function joinSession(
   roomId: string,
+  displayName: string,
   password?: string,
 ): Promise<JoinSessionResponse> {
   return apiFetch(`/sessions/${roomId}/join`, {
     method: 'POST',
-    body: JSON.stringify({ password }),
+    body: JSON.stringify({ displayName, password }),
   });
 }
 

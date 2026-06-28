@@ -12,6 +12,7 @@ import { VideoGrid } from '@/components/app/VideoGrid';
 import { Button } from '@/components/ui/button';
 import { PasswordInput } from '@/components/ui/password-input';
 import { FormError } from '@/components/app/FormError';
+import { NameInput } from '@/components/app/NameInput';
 import { Skeleton } from '@/components/ui/skeleton';
 import { slideUp } from '@/lib/motion';
 import {
@@ -35,6 +36,7 @@ export function RoomPage() {
   const [expiresAt, setExpiresAt] = useState<string>();
   const [joinToken, setJoinToken] = useState<string | null>(null);
   const [password, setPassword] = useState('');
+  const [nameInput, setNameInput] = useState('');
   const [passError, setPassError] = useState<string>();
   const [passLoading, setPassLoading] = useState(false);
   const [joined, setJoined] = useState(false);
@@ -133,10 +135,14 @@ export function RoomPage() {
   async function handlePasscodeSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!roomId) return;
+    if (!nameInput.trim()) {
+      setPassError('Enter your name');
+      return;
+    }
     setPassError(undefined);
     setPassLoading(true);
     try {
-      const result = await joinSession(roomId, password);
+      const result = await joinSession(roomId, nameInput.trim(), password);
       storeJoinToken(roomId, result.joinToken);
       setJoinToken(result.joinToken);
       setLocalPeerId(result.peerId);
@@ -157,9 +163,13 @@ export function RoomPage() {
 
   async function handlePublicJoin() {
     if (!roomId) return;
+    if (!nameInput.trim()) {
+      setPassError('Enter your name');
+      return;
+    }
     setPassLoading(true);
     try {
-      const result = await joinSession(roomId);
+      const result = await joinSession(roomId, nameInput.trim());
       storeJoinToken(roomId, result.joinToken);
       setJoinToken(result.joinToken);
       setLocalPeerId(result.peerId);
@@ -251,6 +261,7 @@ export function RoomPage() {
           </div>
           {isProtected ? (
             <form onSubmit={handlePasscodeSubmit} className="card-session space-y-4 p-6 sm:p-8">
+              <NameInput value={nameInput} onChange={setNameInput} />
               <PasswordInput
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -263,7 +274,8 @@ export function RoomPage() {
               </Button>
             </form>
           ) : (
-            <div className="card-session p-6 sm:p-8">
+            <div className="card-session space-y-4 p-6 sm:p-8">
+              <NameInput value={nameInput} onChange={setNameInput} />
               <FormError message={passError} />
               <Button className="w-full" size="lg" onClick={handlePublicJoin} disabled={passLoading}>
                 {passLoading ? 'Joining…' : 'Join →'}

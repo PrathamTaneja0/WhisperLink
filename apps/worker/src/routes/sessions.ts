@@ -2,7 +2,6 @@ import { getJwtSecret } from '../lib/env';
 import {
   createSessionSchema,
   joinSessionSchema,
-  generateDisplayName,
   generatePeerId,
 } from '@whisperlink/shared';
 import type { Env } from '../types';
@@ -48,12 +47,12 @@ export async function handleCreateSession(request: Request, env: Env): Promise<R
     return json({ error: parsed.error.errors[0]?.message ?? 'Invalid input' }, 400);
   }
 
-  const { durationMinutes, access, password } = parsed.data;
+  const { durationMinutes, access, password, displayName: rawDisplayName } = parsed.data;
   const roomId = generateRoomId();
   const expiresAt = new Date(Date.now() + durationMinutes * 60 * 1000).toISOString();
   const isProtected = access === 'protected';
   const hostPeerId = generatePeerId();
-  const displayName = generateDisplayName();
+  const displayName = rawDisplayName.trim();
 
   let passwordHash: { hash: string; salt: string } | undefined;
   if (isProtected && password) {
@@ -169,7 +168,7 @@ export async function handleJoinSession(
   await clearFailedAttempts(env.RATE_LIMIT, lockoutKey);
 
   const peerId = generatePeerId();
-  const displayName = generateDisplayName();
+  const displayName = parsed.data.displayName.trim();
   const joinToken = await issueJoinToken(
     { roomId, peerId, displayName, isHost: false },
     getJwtSecret(env),

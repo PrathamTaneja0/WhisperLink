@@ -13,8 +13,17 @@ export const PASSCODE_MAX_LENGTH = 32;
 export const SESSION_RATE_LIMIT_PER_HOUR = 10;
 export const PASSCODE_MAX_ATTEMPTS = 5;
 export const PASSCODE_LOCKOUT_MINUTES = 15;
+export const DISPLAY_NAME_MIN_LENGTH = 1;
+export const DISPLAY_NAME_MAX_LENGTH = 32;
+
+const displayNameSchema = z
+  .string()
+  .trim()
+  .min(DISPLAY_NAME_MIN_LENGTH, 'Name is required')
+  .max(DISPLAY_NAME_MAX_LENGTH, `Name must be at most ${DISPLAY_NAME_MAX_LENGTH} characters`);
 
 export const createSessionSchema = z.object({
+  displayName: displayNameSchema,
   durationMinutes: z
     .number()
     .int()
@@ -28,6 +37,7 @@ export const createSessionSchema = z.object({
 );
 
 export const joinSessionSchema = z.object({
+  displayName: displayNameSchema,
   password: z.string().optional(),
 });
 
