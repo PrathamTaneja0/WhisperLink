@@ -50,15 +50,8 @@ export function RoomPage() {
   const [toast, setToast] = useState<{ message: string; variant?: 'default' | 'error' } | null>(null);
   const [sessionEnded, setSessionEnded] = useState(false);
   const signalHandlerRef = useRef<(type: string, payload: unknown) => void>(() => {});
-  const totalSecondsRef = useRef(0);
 
   const { remainingSeconds, formatted, isExpired } = useCountdown(expiresAt, serverTimeOffset);
-
-  useEffect(() => {
-    if (remainingSeconds > totalSecondsRef.current) {
-      totalSecondsRef.current = remainingSeconds;
-    }
-  }, [remainingSeconds]);
 
   const showToast = useCallback((message: string, variant: 'default' | 'error' = 'default') => {
     setToast({ message, variant });
@@ -356,8 +349,6 @@ export function RoomPage() {
           micEnabled={webrtc.micEnabled}
           isHost={isHost}
           chatOpen={chatOpen}
-          remainingSeconds={remainingSeconds}
-          totalSeconds={Math.max(totalSecondsRef.current, remainingSeconds)}
           onToggleMic={webrtc.toggleMic}
           onToggleChat={() => setChatOpen((v) => !v)}
           onCopyLink={handleCopyLink}
