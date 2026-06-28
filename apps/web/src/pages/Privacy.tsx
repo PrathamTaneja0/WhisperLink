@@ -13,14 +13,16 @@ export function PrivacyPage() {
         <section>
           <h2 className="font-display text-base text-foreground">What we do not store</h2>
           <p className="mt-2">
-            Voice, video, text messages, or personal information after a session expires or is ended.
+            Voice, text messages, or display names after a session expires or is ended.
+            Your chosen name is used only for the active session.
           </p>
         </section>
         <section>
           <h2 className="font-display text-base text-foreground">What happens during a session</h2>
           <p className="mt-2">
             Text messages are relayed in real time through our servers but are never written to
-            permanent storage. Voice and video travel directly between participants when possible.
+            permanent storage. Voice travels directly between participants when possible via WebRTC.
+            If you refresh the page, your chat history is not recovered.
           </p>
         </section>
         <section>

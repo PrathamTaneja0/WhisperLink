@@ -77,3 +77,5 @@ npm run typecheck
 ## Privacy
 
 Sessions are ephemeral. We do not store voice or text after a session ends. See [/privacy](/privacy) in the app.
+
+For technical details, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
