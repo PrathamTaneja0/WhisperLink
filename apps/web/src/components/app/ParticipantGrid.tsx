@@ -1,9 +1,11 @@
+import { MicOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface ParticipantTile {
   peerId: string;
   displayName: string;
   isLocal?: boolean;
+  micMuted?: boolean;
 }
 
 interface ParticipantGridProps {
@@ -17,20 +19,28 @@ function ParticipantCard({ participant }: { participant: ParticipantTile }) {
   return (
     <div
       className={cn(
-        'flex aspect-square w-28 flex-col items-center justify-center gap-3 rounded-xl border border-soft-cyan/40 bg-surface p-4 shadow-ambient sm:w-32',
+        'relative flex aspect-square w-28 flex-col items-center justify-center gap-3 rounded-xl border border-soft-cyan/40 bg-surface p-4 shadow-ambient sm:w-32',
         participant.isLocal && 'border-primary-brand/30 bg-lavender/20',
       )}
     >
-      <div
-        className={cn(
-          'flex h-14 w-14 items-center justify-center rounded-full font-display text-xl',
-          participant.isLocal
-            ? 'bg-primary-brand/15 text-primary-brand'
-            : 'bg-mist-pink/50 text-primary-brand',
+      <div className="relative">
+        <div
+          className={cn(
+            'flex h-14 w-14 items-center justify-center rounded-full font-display text-xl',
+            participant.isLocal
+              ? 'bg-primary-brand/15 text-primary-brand'
+              : 'bg-mist-pink/50 text-primary-brand',
+            participant.micMuted && 'opacity-60',
+          )}
+          aria-hidden="true"
+        >
+          {initial}
+        </div>
+        {participant.micMuted && (
+          <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-error/10 text-error">
+            <MicOff className="h-3 w-3" aria-label="Microphone muted" />
+          </span>
         )}
-        aria-hidden="true"
-      >
-        {initial}
       </div>
       <span className="max-w-full truncate text-center text-sm font-medium text-foreground">
         {label}

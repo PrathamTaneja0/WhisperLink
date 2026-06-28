@@ -80,3 +80,13 @@ export function getStoredJoinToken(roomId: string): string | null {
 export function clearJoinToken(roomId: string): void {
   sessionStorage.removeItem(`whisperlink:token:${roomId}`);
 }
+
+export function clearPeerData(roomId: string): void {
+  sessionStorage.removeItem(`whisperlink:peer:${roomId}`);
+}
+
+export function clearSessionStorage(roomId: string): void {
+  clearJoinToken(roomId);
+  clearPeerData(roomId);
+  sessionStorage.removeItem(`whisperlink:pass:${roomId}`);
+}

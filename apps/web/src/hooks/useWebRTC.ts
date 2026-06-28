@@ -7,6 +7,8 @@ interface RemotePeer {
   displayName: string;
 }
 
+export type ToggleMicResult = { ok: true } | { ok: false; reason: 'no-stream' };
+
 interface UseWebRTCOptions {
   localPeerId: string;
   participants: Participant[];
@@ -22,6 +24,7 @@ export function useWebRTC({
 }: UseWebRTCOptions) {
   const [remotePeers, setRemotePeers] = useState<Map<string, RemotePeer>>(new Map());
   const [micEnabled, setMicEnabled] = useState(true);
+  const [hasMediaStream, setHasMediaStream] = useState(false);
   const [mediaError, setMediaError] = useState<string>();
   const peersRef = useRef<Map<string, RTCPeerConnection>>(new Map());
   const localStreamRef = useRef<MediaStream | null>(null);
@@ -151,6 +154,7 @@ export function useWebRTC({
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       localStreamRef.current = stream;
+      setHasMediaStream(true);
       setMicEnabled(stream.getAudioTracks()[0]?.enabled ?? true);
       setMediaError(undefined);
 
@@ -169,15 +173,21 @@ export function useWebRTC({
     }
   }, []);
 
-  const toggleMic = useCallback(() => {
-    if (!localStreamRef.current) return;
-
-    const nextEnabled = !micEnabled;
-    for (const track of localStreamRef.current.getAudioTracks()) {
-      track.enabled = nextEnabled;
+  const toggleMic = useCallback((): ToggleMicResult => {
+    if (!localStreamRef.current) {
+      return { ok: false, reason: 'no-stream' };
     }
-    setMicEnabled(nextEnabled);
-  }, [micEnabled]);
+
+    let nextEnabled = false;
+    setMicEnabled((prev) => {
+      nextEnabled = !prev;
+      for (const track of localStreamRef.current!.getAudioTracks()) {
+        track.enabled = nextEnabled;
+      }
+      return nextEnabled;
+    });
+    return { ok: true };
+  }, []);
 
   const removePeer = useCallback((peerId: string) => {
     const pc = peersRef.current.get(peerId);
@@ -197,6 +207,7 @@ export function useWebRTC({
       pc.close();
     }
     peersRef.current.clear();
+    makingOfferRef.current.clear();
     if (localStreamRef.current) {
       for (const track of localStreamRef.current.getTracks()) {
         track.stop();
@@ -204,11 +215,14 @@ export function useWebRTC({
       localStreamRef.current = null;
     }
     setRemotePeers(new Map());
+    setHasMediaStream(false);
+    setMicEnabled(true);
   }, []);
 
   return {
     remotePeers,
     micEnabled,
+    hasMediaStream,
     mediaError,
     startMedia,
     toggleMic,

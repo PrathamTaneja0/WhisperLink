@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 
 interface ControlBarProps {
   micEnabled: boolean;
+  hasMediaStream: boolean;
   isHost: boolean;
   chatOpen: boolean;
   onToggleMic: () => void;
@@ -21,6 +22,7 @@ interface ControlBarProps {
 
 export function ControlBar({
   micEnabled,
+  hasMediaStream,
   isHost,
   chatOpen,
   onToggleMic,
@@ -32,7 +34,13 @@ export function ControlBar({
   return (
     <div className="glass-panel mx-auto flex max-w-4xl items-center justify-between gap-3 p-3">
       <div className="flex items-center gap-2">
-        <Button variant="secondary" size="icon" onClick={onToggleMic} aria-label={micEnabled ? 'Mute' : 'Unmute'}>
+        <Button
+          variant={micEnabled ? 'secondary' : 'destructive'}
+          size="icon"
+          onClick={onToggleMic}
+          disabled={!hasMediaStream}
+          aria-label={micEnabled ? 'Mute microphone' : 'Unmute microphone'}
+        >
           {micEnabled ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}
         </Button>
         <Button
