@@ -1,7 +1,7 @@
 export interface Env {
   ROOM: DurableObjectNamespace;
   RATE_LIMIT: KVNamespace;
-  ASSETS?: Fetcher;
+  ASSETS: Fetcher;
   JWT_SECRET: string;
   SESSION_RATE_LIMIT_PER_HOUR: string;
   PASSCODE_MAX_ATTEMPTS: string;

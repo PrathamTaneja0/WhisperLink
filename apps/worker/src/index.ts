@@ -52,7 +52,6 @@ export default {
       return stub.fetch(request);
     }
 
-    if (env.ASSETS) return env.ASSETS.fetch(request);
-    return new Response("Not found", { status: 404 });
+    return env.ASSETS.fetch(request);
   },
 } satisfies ExportedHandler<Env>;
