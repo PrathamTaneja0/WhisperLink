@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const DURATION_PRESETS = [5, 10, 15, 30, 60] as const;
+export const DURATION_PRESETS = [5, 15, 30, 60] as const;
 export const MAX_PARTICIPANTS = 6;
 export const MAX_DURATION_MINUTES = 60;
 export const MIN_DURATION_MINUTES = 1;
