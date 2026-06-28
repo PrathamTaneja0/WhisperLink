@@ -1,0 +1,58 @@
+:root {
+  /* Surfaces */
+  --bg-primary: #fcf9f7;
+  --bg-surface: #ffffff;
+  --bg-surface-hover: #f4f3f6;
+  --bg-surface-dim: #eeedf0;
+  --bg-glass: rgba(255, 255, 255, 0.72);
+
+  /* Text */
+  --text-primary: #1a1c1e;
+  --text-muted: #42474d;
+  --text-subtle: #72787e;
+
+  /* Brand */
+  --primary: #334155;
+  --primary-hover: #475569;
+  --primary-brand: #3c5f7b;
+  --accent: #615b6e;
+  --accent-hover: #686174;
+
+  /* Pastels */
+  --mist-pink: #f3e1e1;
+  --soft-cyan: #d1e8e4;
+  --lavender: #e8dff5;
+  --dusk-slate: #334155;
+
+  /* Borders & outlines */
+  --border: #e2e2e5;
+  --border-variant: #c2c7ce;
+  --outline-focus: #615b6e;
+
+  /* Semantic */
+  --error: #ba1a1a;
+  --error-bg: #ffdad6;
+  --success: #2d6a4f;
+  --success-bg: #d1e8e4;
+  --warning: #785527;
+  --warning-bg: #ffddb7;
+
+  /* Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-ambient: 0 4px 20px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+  --shadow-elevated: 0 8px 32px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  /* Motion */
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Layout */
+  --container-max: 1120px;
+}

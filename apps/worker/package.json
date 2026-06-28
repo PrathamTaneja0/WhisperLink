@@ -1,0 +1,23 @@
+{
+  "name": "@whisperlink/worker",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npm run build --workspace=@whisperlink/web && wrangler dev",
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@whisperlink/shared": "*",
+    "jose": "^5.9.6",
+    "nanoid": "^5.0.9"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.5.41",
+    "@cloudflare/workers-types": "^4.20241218.0",
+    "vitest": "~2.1.9",
+    "wrangler": "^4.105.0"
+  }
+}

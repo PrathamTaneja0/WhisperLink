@@ -1,0 +1,17 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Minimalist overlapping circular speech bubbles with transparency -->
+  
+  <!-- Left bubble (Coral/Soft Pink) -->
+  <circle cx="80" cy="100" r="50" fill="#f2a2a2" fill-opacity="0.9" />
+  <path d="M45 135 L40 155 L65 145" fill="#f2a2a2" />
+  
+  <!-- Right bubble (Cream/Beige) -->
+  <circle cx="120" cy="100" r="50" fill="#fdf2e9" fill-opacity="0.9" />
+  <path d="M155 135 L160 155 L135 145" fill="#fdf2e9" />
+  
+  <!-- Overlap area highlighting interaction -->
+  <clipPath id="overlapClip">
+    <circle cx="80" cy="100" r="50" />
+  </clipPath>
+  <circle cx="120" cy="100" r="50" fill="#f8c9c9" fill-opacity="0.5" clip-path="url(#overlapClip)" />
+</svg>

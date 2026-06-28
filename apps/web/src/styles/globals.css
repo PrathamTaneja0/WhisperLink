@@ -1,0 +1,52 @@
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased min-h-screen;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(243, 225, 225, 0.5) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 50% at 80% 20%, rgba(209, 232, 228, 0.45) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 40% at 50% 90%, rgba(232, 223, 245, 0.35) 0%, transparent 50%);
+    background-attachment: fixed;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply rounded-xl border border-border bg-glass shadow-ambient backdrop-blur-xl;
+  }
+
+  .card-privacy {
+    @apply rounded-xl border bg-surface shadow-ambient;
+    border-color: color-mix(in srgb, var(--mist-pink) 60%, transparent);
+  }
+
+  .card-session {
+    @apply rounded-xl border bg-surface shadow-ambient;
+    border-color: color-mix(in srgb, var(--soft-cyan) 60%, transparent);
+  }
+
+  .label-md {
+    @apply text-sm font-semibold tracking-label text-muted uppercase;
+  }
+
+  .headline-display {
+    @apply font-display text-4xl leading-tight tracking-tight text-foreground sm:text-5xl;
+  }
+
+  .headline-lg {
+    @apply font-display text-2xl leading-snug text-foreground sm:text-3xl;
+  }
+
+  .body-lg {
+    @apply text-lg leading-relaxed text-muted;
+  }
+}
