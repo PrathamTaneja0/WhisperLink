@@ -51,11 +51,11 @@ export function CreatePanel() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="card-privacy space-y-6 p-6 sm:p-8">
+    <form onSubmit={handleSubmit} className="card-privacy mx-auto space-y-6 p-6 text-center sm:p-8">
       <DurationPicker value={duration} onChange={setDuration} />
       <AccessToggle isProtected={isProtected} onChange={setIsProtected} />
       {isProtected && (
-        <div>
+        <div className="text-left">
           <label htmlFor="create-password" className="label-md">
             Passcode
           </label>

@@ -18,7 +18,7 @@ describe('CreatePanel', () => {
 
     expect(screen.queryByPlaceholderText('Enter passcode')).not.toBeInTheDocument();
 
-    const toggle = screen.getByRole('switch');
+    const toggle = screen.getByRole('button', { name: 'private' });
     fireEvent.click(toggle);
 
     expect(screen.getByPlaceholderText('Enter passcode')).toBeInTheDocument();

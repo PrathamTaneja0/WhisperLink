@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const DURATION_PRESETS = [5, 10, 15, 30, 60] as const;
 export const MAX_PARTICIPANTS = 6;
-export const MAX_DURATION_MINUTES = 120;
+export const MAX_DURATION_MINUTES = 60;
 export const MIN_DURATION_MINUTES = 1;
 export const DEFAULT_DURATION_MINUTES = 30;
 export const MAX_MESSAGE_LENGTH = 500;
