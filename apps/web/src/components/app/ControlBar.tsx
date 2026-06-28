@@ -1,8 +1,6 @@
 import {
   Mic,
   MicOff,
-  Video,
-  VideoOff,
   Copy,
   PhoneOff,
   LogOut,
@@ -13,13 +11,11 @@ import { EphemeralTimer } from './EphemeralTimer';
 
 interface ControlBarProps {
   micEnabled: boolean;
-  camEnabled: boolean;
   isHost: boolean;
   chatOpen: boolean;
   remainingSeconds: number;
   totalSeconds: number;
   onToggleMic: () => void;
-  onToggleCam: () => void;
   onToggleChat: () => void;
   onCopyLink: () => void;
   onEndSession: () => void;
@@ -28,13 +24,11 @@ interface ControlBarProps {
 
 export function ControlBar({
   micEnabled,
-  camEnabled,
   isHost,
   chatOpen,
   remainingSeconds,
   totalSeconds,
   onToggleMic,
-  onToggleCam,
   onToggleChat,
   onCopyLink,
   onEndSession,
@@ -44,9 +38,6 @@ export function ControlBar({
     <div className="glass-panel mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-2 p-3">
       <Button variant="secondary" size="icon" onClick={onToggleMic} aria-label={micEnabled ? 'Mute' : 'Unmute'}>
         {micEnabled ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}
-      </Button>
-      <Button variant="secondary" size="icon" onClick={onToggleCam} aria-label={camEnabled ? 'Stop camera' : 'Start camera'}>
-        {camEnabled ? <Video className="h-4 w-4" /> : <VideoOff className="h-4 w-4" />}
       </Button>
       <Button
         variant={chatOpen ? 'primary' : 'secondary'}

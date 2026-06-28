@@ -8,7 +8,7 @@ import { StatusBadge } from '@/components/app/StatusBadge';
 import { Toast } from '@/components/app/Toast';
 import { ControlBar } from '@/components/app/ControlBar';
 import { ChatPanel } from '@/components/app/ChatPanel';
-import { VideoGrid } from '@/components/app/VideoGrid';
+import { ParticipantGrid } from '@/components/app/ParticipantGrid';
 import { Button } from '@/components/ui/button';
 import { PasswordInput } from '@/components/ui/password-input';
 import { FormError } from '@/components/app/FormError';
@@ -293,7 +293,7 @@ export function RoomPage() {
         <motion.div {...slideUp} className="mx-auto w-full max-w-md space-y-6 text-center">
           <h1 className="headline-lg">Ready to talk?</h1>
           <p className="text-sm text-muted">
-            Click join to enable your microphone. Camera is off by default.
+            Click join to enable your microphone.
           </p>
           {webrtc.mediaError && <FormError message={webrtc.mediaError} />}
           <Button className="w-full" size="lg" onClick={handleMediaJoin}>
@@ -307,17 +307,15 @@ export function RoomPage() {
   const me = participants.find((p) => p.peerId === localPeerId);
   const tileDisplayName = me?.displayName ?? (displayName || 'You');
 
-  const tiles = [
+  const participantTiles = [
     {
       peerId: localPeerId,
       displayName: tileDisplayName,
-      stream: webrtc.localStream,
       isLocal: true,
     },
     ...Array.from(webrtc.remotePeers.values()).map((p) => ({
       peerId: p.peerId,
       displayName: p.displayName,
-      stream: p.stream,
       isLocal: false,
     })),
   ];
@@ -340,7 +338,7 @@ export function RoomPage() {
     <AppShell variant="room" headerActions={headerActions}>
       <div className="flex flex-1 flex-col gap-4 lg:flex-row">
         <div className="flex-1">
-          <VideoGrid tiles={tiles} />
+          <ParticipantGrid participants={participantTiles} />
         </div>
         {chatOpen && (
           <div className="h-80 lg:h-auto lg:w-80 lg:min-h-0">
@@ -356,13 +354,11 @@ export function RoomPage() {
       <div className="mt-4">
         <ControlBar
           micEnabled={webrtc.micEnabled}
-          camEnabled={webrtc.camEnabled}
           isHost={isHost}
           chatOpen={chatOpen}
           remainingSeconds={remainingSeconds}
           totalSeconds={Math.max(totalSecondsRef.current, remainingSeconds)}
           onToggleMic={webrtc.toggleMic}
-          onToggleCam={webrtc.toggleCam}
           onToggleChat={() => setChatOpen((v) => !v)}
           onCopyLink={handleCopyLink}
           onEndSession={handleEndSession}

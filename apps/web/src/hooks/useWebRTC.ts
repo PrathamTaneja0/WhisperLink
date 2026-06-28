@@ -5,7 +5,6 @@ import { getTurnCredentials } from '@/lib/api';
 interface RemotePeer {
   peerId: string;
   displayName: string;
-  stream: MediaStream | null;
 }
 
 interface UseWebRTCOptions {
@@ -21,10 +20,8 @@ export function useWebRTC({
   connected,
   sendSignal,
 }: UseWebRTCOptions) {
-  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
   const [remotePeers, setRemotePeers] = useState<Map<string, RemotePeer>>(new Map());
   const [micEnabled, setMicEnabled] = useState(true);
-  const [camEnabled, setCamEnabled] = useState(false);
   const [mediaError, setMediaError] = useState<string>();
   const peersRef = useRef<Map<string, RTCPeerConnection>>(new Map());
   const localStreamRef = useRef<MediaStream | null>(null);
@@ -41,10 +38,10 @@ export function useWebRTC({
       });
   }, []);
 
-  const updateRemoteStream = useCallback((peerId: string, displayName: string, stream: MediaStream | null) => {
+  const trackRemotePeer = useCallback((peerId: string, displayName: string) => {
     setRemotePeers((prev) => {
       const next = new Map(prev);
-      next.set(peerId, { peerId, displayName, stream });
+      next.set(peerId, { peerId, displayName });
       return next;
     });
   }, []);
@@ -56,7 +53,7 @@ export function useWebRTC({
       const pc = new RTCPeerConnection({ iceServers: iceServersRef.current });
 
       if (localStreamRef.current) {
-        for (const track of localStreamRef.current.getTracks()) {
+        for (const track of localStreamRef.current.getAudioTracks()) {
           pc.addTrack(track, localStreamRef.current);
         }
       }
@@ -70,18 +67,18 @@ export function useWebRTC({
         }
       };
 
-      pc.ontrack = (event) => {
-        const [stream] = event.streams;
-        updateRemoteStream(peerId, displayName, stream);
+      pc.ontrack = () => {
+        trackRemotePeer(peerId, displayName);
       };
 
       pc.onconnectionstatechange = () => {
-        if (pc.connectionState === 'failed' || pc.connectionState === 'closed') {
-          updateRemoteStream(peerId, displayName, null);
+        if (pc.connectionState === 'connected') {
+          trackRemotePeer(peerId, displayName);
         }
       };
 
       peersRef.current.set(peerId, pc);
+      trackRemotePeer(peerId, displayName);
 
       if (isInitiator && !makingOfferRef.current.has(peerId)) {
         makingOfferRef.current.add(peerId);
@@ -101,7 +98,7 @@ export function useWebRTC({
 
       return pc;
     },
-    [sendSignal, updateRemoteStream],
+    [sendSignal, trackRemotePeer],
   );
 
   const handleSignal = useCallback(
@@ -152,16 +149,13 @@ export function useWebRTC({
 
   const startMedia = useCallback(async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: camEnabled ? { width: { max: 1280 }, height: { max: 720 } } : false,
-      });
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       localStreamRef.current = stream;
-      setLocalStream(stream);
+      setMicEnabled(stream.getAudioTracks()[0]?.enabled ?? true);
       setMediaError(undefined);
 
       for (const [, pc] of peersRef.current) {
-        for (const track of stream.getTracks()) {
+        for (const track of stream.getAudioTracks()) {
           const sender = pc.getSenders().find((s) => s.track?.kind === track.kind);
           if (sender) {
             await sender.replaceTrack(track);
@@ -173,50 +167,17 @@ export function useWebRTC({
     } catch {
       setMediaError('Microphone access denied. Please allow permissions and try again.');
     }
-  }, [camEnabled]);
-
-  const toggleMic = useCallback(() => {
-    if (localStreamRef.current) {
-      for (const track of localStreamRef.current.getAudioTracks()) {
-        track.enabled = !track.enabled;
-      }
-      setMicEnabled((v) => !v);
-    }
   }, []);
 
-  const toggleCam = useCallback(async () => {
-    const newCamState = !camEnabled;
-    setCamEnabled(newCamState);
-
+  const toggleMic = useCallback(() => {
     if (!localStreamRef.current) return;
 
-    if (newCamState) {
-      try {
-        const videoStream = await navigator.mediaDevices.getUserMedia({
-          video: { width: { max: 1280 }, height: { max: 720 } },
-        });
-        const videoTrack = videoStream.getVideoTracks()[0];
-        localStreamRef.current.addTrack(videoTrack);
-        setLocalStream(new MediaStream(localStreamRef.current.getTracks()));
-
-        for (const [, pc] of peersRef.current) {
-          pc.addTrack(videoTrack, localStreamRef.current);
-        }
-      } catch {
-        setCamEnabled(false);
-      }
-    } else {
-      for (const track of localStreamRef.current.getVideoTracks()) {
-        track.stop();
-        localStreamRef.current.removeTrack(track);
-        for (const [, pc] of peersRef.current) {
-          const sender = pc.getSenders().find((s) => s.track?.kind === 'video');
-          if (sender) pc.removeTrack(sender);
-        }
-      }
-      setLocalStream(new MediaStream(localStreamRef.current.getTracks()));
+    const nextEnabled = !micEnabled;
+    for (const track of localStreamRef.current.getAudioTracks()) {
+      track.enabled = nextEnabled;
     }
-  }, [camEnabled]);
+    setMicEnabled(nextEnabled);
+  }, [micEnabled]);
 
   const removePeer = useCallback((peerId: string) => {
     const pc = peersRef.current.get(peerId);
@@ -242,19 +203,15 @@ export function useWebRTC({
       }
       localStreamRef.current = null;
     }
-    setLocalStream(null);
     setRemotePeers(new Map());
   }, []);
 
   return {
-    localStream,
     remotePeers,
     micEnabled,
-    camEnabled,
     mediaError,
     startMedia,
     toggleMic,
-    toggleCam,
     handleSignal,
     removePeer,
     cleanup,

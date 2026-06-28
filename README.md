@@ -2,13 +2,13 @@
 
 Talk freely. No strings attached.
 
-WhisperLink is a lightweight, anonymous voice/video/text chat app. Create a session, set a time limit, share a link, talk, then the session is destroyed. No accounts required.
+WhisperLink is a lightweight, anonymous voice and text chat app. Create a session, set a time limit, share a link, talk, then the session is destroyed. No accounts required.
 
 ## Features
 
 - **Ephemeral sessions** — auto-expire or end manually
 - **Public or password-protected** rooms
-- **Voice, video, and text** — up to 6 participants (P2P mesh)
+- **Voice and text** — up to 6 participants (P2P audio mesh)
 - **Zero friction** — no sign-up, minimal clicks
 
 ## Tech stack
@@ -76,4 +76,4 @@ npm run typecheck
 
 ## Privacy
 
-Sessions are ephemeral. We do not store voice, video, or text after a session ends. See [/privacy](/privacy) in the app.
+Sessions are ephemeral. We do not store voice or text after a session ends. See [/privacy](/privacy) in the app.
