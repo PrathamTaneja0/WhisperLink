@@ -23,7 +23,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy ../web/dist --project-name=whisperlink
+          command: deploy
           workingDirectory: apps/worker
         env:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
