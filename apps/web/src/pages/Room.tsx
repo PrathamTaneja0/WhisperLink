@@ -7,6 +7,7 @@ import { Toast } from '@/components/app/Toast';
 import { ControlBar } from '@/components/app/ControlBar';
 import { ChatPanel } from '@/components/app/ChatPanel';
 import { ParticipantGrid } from '@/components/app/ParticipantGrid';
+import { RemoteAudioSinks } from '@/components/app/RemoteAudioSink';
 import { Button } from '@/components/ui/button';
 import { PasswordInput } from '@/components/ui/password-input';
 import { FormError } from '@/components/app/FormError';
@@ -143,22 +144,13 @@ export function RoomPage() {
     );
   }
 
-  const me = session.participants.find((p) => p.peerId === session.localPeerId);
-  const tileDisplayName = me?.displayName ?? (session.displayName || 'You');
-
-  const participantTiles = [
-    {
-      peerId: session.localPeerId,
-      displayName: tileDisplayName,
-      isLocal: true,
-      micMuted: session.hasMediaStream && !session.micEnabled,
-    },
-    ...Array.from(session.remotePeers.values()).map((p) => ({
-      peerId: p.peerId,
-      displayName: p.displayName,
-      isLocal: false,
-    })),
-  ];
+  const participantTiles = session.participants.map((p) => ({
+    peerId: p.peerId,
+    displayName: p.peerId === session.localPeerId ? (p.displayName || session.displayName || 'You') : p.displayName,
+    isLocal: p.peerId === session.localPeerId,
+    micMuted: p.peerId === session.localPeerId && session.hasMediaStream && !session.micEnabled,
+    isSpeaking: session.speakingPeers.get(p.peerId) ?? false,
+  }));
 
   const connectionVariant = session.connected ? 'success' : 'warning';
 
@@ -175,6 +167,7 @@ export function RoomPage() {
 
   return (
     <AppShell variant="room" headerActions={headerActions}>
+      <RemoteAudioSinks streams={session.remoteStreams} />
       <div className="flex flex-1 flex-col gap-4 lg:flex-row">
         <div className="flex-1">
           <ParticipantGrid participants={participantTiles} />

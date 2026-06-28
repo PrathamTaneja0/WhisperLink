@@ -21,6 +21,7 @@ import {
 import { useSignaling } from '@/hooks/useSignaling';
 import { useWebRTC } from '@/hooks/useWebRTC';
 import { useCountdown } from '@/hooks/useCountdown';
+import { useSpeakingMap, type SpeakingSource } from '@/hooks/useSpeakingLevel';
 
 export type SessionPhase = 'idle' | 'loading' | 'join-form' | 'media-prompt' | 'active' | 'ended';
 
@@ -41,7 +42,10 @@ interface SessionContextValue {
   micEnabled: boolean;
   hasMediaStream: boolean;
   mediaError?: string;
-  remotePeers: Map<string, { peerId: string; displayName: string }>;
+  remotePeers: Map<string, { peerId: string; displayName: string; stream: MediaStream | null }>;
+  remoteStreams: Map<string, MediaStream | null>;
+  localStream: MediaStream | null;
+  speakingPeers: Map<string, boolean>;
   formatted: string;
   remainingSeconds: number;
   isActive: boolean;
@@ -148,11 +152,27 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     onSessionExpire,
   );
 
+  const handleParticipants = useCallback(
+    (list: Participant[]) => {
+      setParticipants(list);
+      const me = list.find((p) => p.peerId === localPeerId);
+      if (me) {
+        setIsHost(me.isHost);
+      }
+    },
+    [localPeerId],
+  );
+
+  const handlePeerLeft = useCallback((peerId: string) => {
+    setParticipants((prev) => prev.filter((p) => p.peerId !== peerId));
+    webrtcRef.current?.removePeer(peerId);
+  }, []);
+
   const { connected, sendSignal, sendChat } = useSignaling({
     roomId: roomId ?? '',
     token: joinToken ?? '',
     enabled: !!joinToken && !!roomId && phase !== 'ended' && phase !== 'idle',
-    onParticipants: setParticipants,
+    onParticipants: handleParticipants,
     onSignal: (type, payload) => signalHandlerRef.current(type, payload),
     onChatMessage: (msg) => setChatMessages((prev) => [...prev, msg]),
     onSessionSync: (payload) => {
@@ -163,7 +183,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     },
     onSessionWarning: (payload) => showToast(payload.message),
     onSessionEnded: () => finishSession(),
-    onPeerLeft: (peerId) => webrtcRef.current?.removePeer(peerId),
+    onPeerLeft: handlePeerLeft,
   });
 
   const webrtc = useWebRTC({
@@ -177,6 +197,31 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     webrtcRef.current = webrtc;
     signalHandlerRef.current = webrtc.handleSignal;
   }, [webrtc]);
+
+  const speakingSources = useMemo<SpeakingSource[]>(() => {
+    const sources: SpeakingSource[] = [];
+    if (webrtc.localStream && webrtc.hasMediaStream && localPeerId) {
+      sources.push({
+        id: localPeerId,
+        stream: webrtc.localStream,
+        enabled: webrtc.micEnabled,
+      });
+    }
+    for (const [peerId, stream] of webrtc.remoteStreams) {
+      if (stream) {
+        sources.push({ id: peerId, stream, enabled: true });
+      }
+    }
+    return sources;
+  }, [
+    webrtc.localStream,
+    webrtc.remoteStreams,
+    webrtc.hasMediaStream,
+    webrtc.micEnabled,
+    localPeerId,
+  ]);
+
+  const speakingPeers = useSpeakingMap(speakingSources);
 
   const loadRoom = useCallback(async (id: string) => {
     const currentRoom = roomIdRef.current;
@@ -304,6 +349,9 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       hasMediaStream: webrtc.hasMediaStream,
       mediaError: webrtc.mediaError,
       remotePeers: webrtc.remotePeers,
+      remoteStreams: webrtc.remoteStreams,
+      localStream: webrtc.localStream,
+      speakingPeers,
       formatted,
       remainingSeconds,
       isActive,
@@ -335,6 +383,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       chatOpen,
       connected,
       webrtc,
+      speakingPeers,
       formatted,
       remainingSeconds,
       isActive,

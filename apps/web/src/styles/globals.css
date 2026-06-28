@@ -88,6 +88,24 @@
   .animate-hero-float {
     animation: hero-float 4s ease-in-out infinite;
   }
+
+  .animate-speaking-glow {
+    animation: speaking-glow 1.2s ease-in-out infinite;
+  }
+
+  .shadow-speaking {
+    box-shadow: 0 0 24px color-mix(in srgb, var(--primary-brand) 35%, transparent);
+  }
+}
+
+@keyframes speaking-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary-brand) 25%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 16px 4px color-mix(in srgb, var(--primary-brand) 40%, transparent);
+  }
 }
 
 @keyframes hero-float {
