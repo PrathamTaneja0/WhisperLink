@@ -49,4 +49,18 @@
   .body-lg {
     @apply text-lg leading-relaxed text-muted;
   }
+
+  .animate-hero-float {
+    animation: hero-float 4s ease-in-out infinite;
+  }
+}
+
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
 }

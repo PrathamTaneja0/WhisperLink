@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Shield, Clock, Users } from 'lucide-react';
 import { WhisperLinkLogo } from '@/components/app/WhisperLinkLogo';
+import { HeroIllustration } from '@/components/app/HeroIllustration';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -17,11 +18,7 @@ export function LandingPage() {
       <h1 className="headline-display text-center">Talk freely.</h1>
       <p className="body-lg mt-3 text-center">No strings attached.</p>
 
-      <img
-        src="/illustrations/hero-communication.png"
-        alt="Two people connecting remotely"
-        className="mt-8 w-full max-w-md"
-      />
+      <HeroIllustration />
 
       <div className="mt-8 flex flex-wrap justify-center gap-2">
         {features.map(({ icon: Icon, label, color }) => (
