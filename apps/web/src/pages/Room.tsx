@@ -19,7 +19,10 @@ export function RoomPage() {
   const { roomId: routeRoomId } = useParams<{ roomId: string }>();
   const session = useSession();
   const loadRoomRef = useRef(session.loadRoom);
-  loadRoomRef.current = session.loadRoom;
+
+  useEffect(() => {
+    loadRoomRef.current = session.loadRoom;
+  }, [session.loadRoom]);
 
   const [password, setPassword] = useState('');
   const [nameInput, setNameInput] = useState('');

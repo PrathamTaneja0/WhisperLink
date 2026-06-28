@@ -91,10 +91,19 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const signalHandlerRef = useRef<(type: string, payload: unknown) => void>(() => {});
   const roomIdRef = useRef<string | null>(null);
   const joinedRef = useRef(false);
-  roomIdRef.current = roomId;
-  joinedRef.current = joined;
+  const phaseRef = useRef<SessionPhase>('idle');
 
-  const { remainingSeconds, formatted, isExpired } = useCountdown(expiresAt, serverTimeOffset);
+  useEffect(() => {
+    roomIdRef.current = roomId;
+  }, [roomId]);
+
+  useEffect(() => {
+    joinedRef.current = joined;
+  }, [joined]);
+
+  useEffect(() => {
+    phaseRef.current = phase;
+  }, [phase]);
 
   const showToast = useCallback((message: string, variant: 'default' | 'error' = 'default') => {
     setToast({ message, variant });
@@ -127,6 +136,18 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     navigate('/session-ended', { replace: true });
   }, [clearSession, navigate]);
 
+  const onSessionExpire = useCallback(() => {
+    if (joinedRef.current && phaseRef.current === 'active') {
+      finishSession();
+    }
+  }, [finishSession]);
+
+  const { remainingSeconds, formatted } = useCountdown(
+    expiresAt,
+    serverTimeOffset,
+    onSessionExpire,
+  );
+
   const { connected, sendSignal, sendChat } = useSignaling({
     roomId: roomId ?? '',
     token: joinToken ?? '',
@@ -152,8 +173,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     sendSignal,
   });
 
-  webrtcRef.current = webrtc;
-  signalHandlerRef.current = webrtc.handleSignal;
+  useEffect(() => {
+    webrtcRef.current = webrtc;
+    signalHandlerRef.current = webrtc.handleSignal;
+  }, [webrtc]);
 
   const loadRoom = useCallback(async (id: string) => {
     const currentRoom = roomIdRef.current;
@@ -260,12 +283,6 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     finishSession();
   }, [finishSession]);
 
-  useEffect(() => {
-    if (isExpired && joined && phase === 'active') {
-      finishSession();
-    }
-  }, [isExpired, joined, phase, finishSession]);
-
   const isActive = !!roomId && !!joinToken && joined && phase === 'active';
 
   const value = useMemo<SessionContextValue>(
@@ -325,6 +342,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       joinWithCredentials,
       startMedia,
       toggleMic,
+      sendChat,
       attachSession,
       endSessionAsHost,
       leaveSession,

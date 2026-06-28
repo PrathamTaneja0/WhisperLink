@@ -44,7 +44,7 @@ export async function handleCreateSession(request: Request, env: Env): Promise<R
 
   const parsed = createSessionSchema.safeParse(body);
   if (!parsed.success) {
-    return json({ error: parsed.error.errors[0]?.message ?? 'Invalid input' }, 400);
+    return json({ error: parsed.error.issues[0]?.message ?? 'Invalid input' }, 400);
   }
 
   const { durationMinutes, access, password, displayName: rawDisplayName } = parsed.data;

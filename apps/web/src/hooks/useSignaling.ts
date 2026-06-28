@@ -39,7 +39,17 @@ export function useSignaling({
     onPeerLeft,
   });
 
-  callbacksRef.current = {
+  useEffect(() => {
+    callbacksRef.current = {
+      onParticipants,
+      onSignal,
+      onChatMessage,
+      onSessionSync,
+      onSessionWarning,
+      onSessionEnded,
+      onPeerLeft,
+    };
+  }, [
     onParticipants,
     onSignal,
     onChatMessage,
@@ -47,7 +57,7 @@ export function useSignaling({
     onSessionWarning,
     onSessionEnded,
     onPeerLeft,
-  };
+  ]);
 
   useEffect(() => {
     if (!roomId || !token || !enabled) return;

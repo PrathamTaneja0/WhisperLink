@@ -1,8 +1,43 @@
 @import './tokens.css';
+@import 'tailwindcss';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@theme {
+  --color-background: var(--bg-primary);
+  --color-surface: var(--bg-surface);
+  --color-surface-hover: var(--bg-surface-hover);
+  --color-surface-dim: var(--bg-surface-dim);
+  --color-glass: var(--bg-glass);
+  --color-foreground: var(--text-primary);
+  --color-muted: var(--text-muted);
+  --color-subtle: var(--text-subtle);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-brand: var(--primary-brand);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-mist-pink: var(--mist-pink);
+  --color-soft-cyan: var(--soft-cyan);
+  --color-lavender: var(--lavender);
+  --color-dusk-slate: var(--dusk-slate);
+  --color-border: var(--border);
+  --color-border-variant: var(--border-variant);
+  --color-error: var(--error);
+  --color-error-bg: var(--error-bg);
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-warning: var(--warning);
+  --color-warning-bg: var(--warning-bg);
+
+  --font-sans: 'Hanken Grotesk', system-ui, sans-serif;
+  --font-display: 'Libre Caslon Text', Georgia, serif;
+
+  --shadow-ambient: var(--shadow-ambient);
+  --shadow-elevated: var(--shadow-elevated);
+
+  --max-width-container: var(--container-max);
+
+  --tracking-label: 0.05em;
+}
 
 @layer base {
   * {
