@@ -19,8 +19,8 @@ new_classes = ["Room"]
 
 [[kv_namespaces]]
 binding = "RATE_LIMIT"
-id = "00000000000000000000000000000000"
-preview_id = "00000000000000000000000000000001"
+id = "1867dd716c69476ba8bf299ff138613f"
+preview_id = "1867dd716c69476ba8bf299ff138613f"
 
 [vars]
 SESSION_RATE_LIMIT_PER_HOUR = "10"
