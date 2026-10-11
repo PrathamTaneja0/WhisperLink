@@ -43,9 +43,6 @@ export function CreatePanel() {
         password: isProtected ? password : undefined,
       });
       storeJoinToken(result.roomId, result.joinToken);
-      if (isProtected) {
-        sessionStorage.setItem(`whisperlink:pass:${result.roomId}`, password);
-      }
       sessionStorage.setItem(`whisperlink:peer:${result.roomId}`, JSON.stringify({
         peerId: result.peerId,
         displayName: result.displayName,
