@@ -8,7 +8,7 @@ export function AppLayout() {
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
       <ActiveSessionBar />
-      <main className="mx-auto flex w-full max-w-container flex-1 flex-col px-5 pb-12 pt-4 sm:px-8 lg:px-16">
+      <main className="mx-auto flex w-full max-w-container flex-1 flex-col px-5 py-[15px] sm:px-8 lg:px-16">
         <Outlet />
       </main>
       <SiteFooter />

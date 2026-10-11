@@ -24,7 +24,7 @@ export function AppShell({
       <main
         className={cn(
           'mx-auto flex w-full flex-1 flex-col',
-          isRoom ? 'px-4 pb-4 pt-2 sm:px-6 sm:pb-6' : 'max-w-container px-5 pb-12 pt-4 sm:px-8 lg:px-16',
+          isRoom ? 'px-4 pb-4 pt-2 sm:px-6 sm:pb-6' : 'max-w-container px-5 py-[15px] sm:px-8 lg:px-16',
         )}
       >
         {children}
